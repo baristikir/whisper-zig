@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "ggml.h": "c",
+        "ggml-alloc.h": "c"
+    }
+}
