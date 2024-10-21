@@ -7,10 +7,10 @@ pub const Segment = struct {
 
 ctx: *c.whisper_context,
 allocator: std.mem.Allocator,
-const Whisper = @This();
+const Transcriber = @This();
 
-pub fn init(allocator: std.mem.Allocator, model_name: []const u8) !Whisper {
-    const model_path = try std.fmt.allocPrintZ(allocator, "../whisper.cpp/models/{s}", .{model_name});
+pub fn init(allocator: std.mem.Allocator, model_name: []const u8) !Transcriber {
+    const model_path = try std.fmt.allocPrintZ(allocator, "./whisper.cpp/models/{s}", .{model_name});
     defer allocator.free(model_path);
 
     const cparams = c.whisper_context_default_params();
@@ -19,16 +19,16 @@ pub fn init(allocator: std.mem.Allocator, model_name: []const u8) !Whisper {
         return error.WhisperInitFailed;
     };
 
-    return Whisper{
+    return Transcriber{
         .ctx = ctx,
         .allocator = allocator,
     };
 }
-pub fn deinit(self: *Whisper) void {
+pub fn deinit(self: *Transcriber) void {
     c.whisper_free(self.ctx);
 }
 
-pub fn transcribe_file(self: *Whisper, audio_buf: *std.ArrayList(f32)) !void {
+pub fn transcribe_file(self: *Transcriber, audio_buf: *std.ArrayList(f32)) !void {
     const wparams = c.whisper_full_default_params(c.WHISPER_SAMPLING_GREEDY);
     const whisper_ret: c_int = c.whisper_full(self.ctx, wparams, @ptrCast(@alignCast(audio_buf.items.ptr)), @intCast(audio_buf.items.len));
     if (whisper_ret != 0) {
@@ -37,7 +37,7 @@ pub fn transcribe_file(self: *Whisper, audio_buf: *std.ArrayList(f32)) !void {
     }
 }
 
-pub fn get_segments(self: *Whisper) !std.ArrayList(Segment) {
+pub fn get_segments(self: *Transcriber) !std.ArrayList(Segment) {
     var segments = std.ArrayList(Segment).init(self.allocator);
     errdefer segments.deinit();
 

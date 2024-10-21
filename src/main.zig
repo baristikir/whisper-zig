@@ -1,7 +1,7 @@
 const std = @import("std");
 const c = @import("c.zig");
 const drwav = @import("dr_wav.zig");
-const Whisper = @import("whisper.zig");
+const Transcriber = @import("transcriber.zig");
 
 pub fn main() !void {
     var general_purpose_allocator = std.heap.GeneralPurposeAllocator(.{}){};
@@ -41,9 +41,9 @@ pub fn main() !void {
         }
     }
 
-    var whisper: ?Whisper = null;
+    var whisper: ?Transcriber = null;
     if (model_name) |n| {
-        whisper = Whisper.init(gpa, n) catch |err| {
+        whisper = Transcriber.init(gpa, n) catch |err| {
             std.debug.print("Error: Initializing Whisper {}\n", .{err});
             return;
         };
@@ -82,7 +82,7 @@ test "instantiate whisper model" {
     defer _ = general_purpose_allocator.deinit();
 
     const model_name = "ggml-base.en.bin";
-    var whisper = Whisper.init(gpa, model_name) catch |err| {
+    var whisper = Transcriber.init(gpa, model_name) catch |err| {
         std.debug.print("Error: Initializing Whisper Model {}\n", .{err});
         return err;
     };
@@ -98,7 +98,7 @@ test "transcribe sample" {
     defer _ = general_purpose_allocator.deinit();
 
     const model_name = "ggml-base.en.bin";
-    var whisper = Whisper.init(gpa, model_name) catch |err| {
+    var whisper = Transcriber.init(gpa, model_name) catch |err| {
         std.debug.print("Error: Initializing Whisper Model {}\n", .{err});
         return err;
     };
