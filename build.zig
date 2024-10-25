@@ -15,7 +15,12 @@ fn setupWhisper(b: *std.Build, exe: *std.Build.Step.Compile) void {
     lib.addIncludePath(b.path("whisper.cpp/ggml/include"));
 
     const whisper_files: []const []const u8 = &.{
-        "ggml/src/ggml.c", "ggml/src/ggml-alloc.c", "ggml/src/ggml-backend.c", "ggml/src/ggml-quants.c", "src/whisper.cpp",
+        "ggml/src/ggml.c",
+        "ggml/src/ggml-alloc.c",
+        "ggml/src/ggml-backend.cpp",
+        "ggml/src/ggml-quants.c",
+        "src/whisper.cpp",
+        "ggml/src/ggml-aarch64.c",
     };
 
     for (whisper_files) |f| {
